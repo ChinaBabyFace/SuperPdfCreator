@@ -77,7 +77,7 @@ public class Pdf {
      * samplePdf
      * @param filename
      */
-    public boolean samplePdf(String savePath, String filename) {
+    public File samplePdf(String savePath, String filename) {
         String tempPath = l_context.getCacheDir().getAbsolutePath();
         boolean status = true;
 
@@ -155,7 +155,7 @@ public class Pdf {
         document.setCompressionMode(PdfDocument.CompressionMode.COMP_ALL);
 
         // from https://baconipsum.com
-        String bacon_ipsum = "Bacon ipsum dolor amet tenderloin kielbasa doner.";
+        String bacon_ipsum = "123 测试时刻记得看风景Bacon ipsum dolor amet tenderloin kielbasa doner.";
 
         // ===========================================================
         // Setup Page fonts
@@ -404,23 +404,23 @@ public class Pdf {
         // setup passwords for files, enable print permission
         // ===========================================================
 
-        document.setPassword("UseThisAsOwnerPassword", "UseThisAsUserPassword");
-        document.setPermission(PdfDocument.Permissions.ENABLE_PRINT);
-        document.setEncryptionMode(PdfDocument.EncryptionMode.ENCRYPT_R3_128);
+//        document.setPassword("UseThisAsOwnerPassword", "UseThisAsUserPassword");
+//        document.setPermission(PdfDocument.Permissions.ENABLE_PRINT);
+//        document.setEncryptionMode(PdfDocument.EncryptionMode.ENCRYPT_R3_128);
 
         // ===========================================================
         // save to file, move to storage from cache
         // ===========================================================
 
         try {
-            document.saveToFile(tempPath + "/" + filename);
-            moveFile(tempPath, savePath, filename);
-            return true;
+
+            document.saveToFile(savePath + "/" + filename);
+            return new File(savePath + "/" + filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return null;
     }
 
 
@@ -452,11 +452,11 @@ public class Pdf {
      * @param filename
      * @return
      */
-    public boolean moveFile(String originPath, String destinationPath, String filename) {
+    public File moveFile(String originPath, String destinationPath, String filename) {
 
         File fileIn = new File(originPath + "/" + filename);
         if (!fileIn.exists()) {
-            return false;
+            return null;
         }
 
         File fileOut = new File(destinationPath + "/" + filename);
@@ -478,12 +478,12 @@ public class Pdf {
             in.close();
             out.flush();
             out.close();
-            return true;
+            return fileOut;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return null;
     }
 
 

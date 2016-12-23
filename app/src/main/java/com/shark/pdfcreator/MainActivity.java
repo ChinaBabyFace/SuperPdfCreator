@@ -1,6 +1,8 @@
 package com.shark.pdfcreator;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button makepdf = (Button)findViewById(R.id.button);
+        Button makepdf = (Button) findViewById(R.id.button);
         makepdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,26 +41,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    class AsyncMakePdf extends AsyncTask<Void, Void, Void> {
+    class AsyncMakePdf extends AsyncTask<Void, Void, File> {
 
-        boolean status = true;
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected File doInBackground(Void... params) {
             Pdf pdf = new Pdf(MainActivity.this);
-            status = pdf.samplePdf(Environment.getExternalStorageDirectory().getAbsolutePath(), "sample.pdf");
-            return null;
+            return pdf.samplePdf(Environment.getExternalStorageDirectory().getAbsolutePath(), "sample.pdf");
         }
 
         @Override
-        protected void onPostExecute(Void p) {
-            String statusString;
-            if (status) {
-                statusString = "PDF was created in " + Environment.getExternalStorageDirectory().getAbsolutePath() + " as sample.pdf";
-            } else {
-                statusString = "PDF wasn't created";
-            }
-            Toast.makeText(MainActivity.this, statusString, Toast.LENGTH_LONG).show();
+        protected void onPostExecute(File p) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setType("application/pdf");
+            intent.setData(Uri.fromFile(p));
+            startActivity(intent);
             pDialog.cancel();
         }
     }
